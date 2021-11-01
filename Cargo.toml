@@ -5,6 +5,7 @@ edition = "2021"
 license = "MIT"
 
 [dependencies]
+dirs = "4.0.0"
 clap = "2.33.3"
 hyper = "0.14.14"
 colored = "2.0.0"
