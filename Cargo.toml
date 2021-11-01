@@ -1,0 +1,10 @@
+[package]
+name = "crane"
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+
+[dependencies]
+clap = "2.33.3"
+hyper = "0.14.14"
+colored = "2.0.0"
