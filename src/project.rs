@@ -34,10 +34,12 @@ impl ProjectType {
     }
 }
 
-pub struct Project {}
+pub struct Project {
+    pub path: String,
+}
 
 impl Project {
-    pub fn new(proj_name: &str, proj_type: &ProjectType) -> Result<(), String> {
+    pub fn new(proj_name: &str, proj_type: &ProjectType) -> Result<Self, String> {
         match proj_type {
             ProjectType::Unknown => {
                 return Err(
@@ -48,22 +50,31 @@ impl Project {
             _ => {}
         }
 
-        let dir = std::env::current_dir()
-            .unwrap()
-            .to_str()
-            .unwrap()
-            .to_string()
-            + "/"
-            + proj_name;
+        let mut dir = std::env::current_dir().unwrap().display().to_string();
 
-        match std::fs::create_dir(&dir) {
-            Ok(_) => {}
-            Err(_) => return Err(format!(
-                "destination `{}` already exists\n\nUse `crane --init` to initialize the directory",
-                &dir
-            )),
+        if proj_name == "" {
+            if std::fs::read_dir(&dir).unwrap().count() != 0 {
+                return Err(
+                    format!(
+                        "destination folder `{}` is not empty\n\ncreate a new directory or remove the contents of this one",
+                        dir
+                    )
+                );
+            }
+        } else {
+            dir += format!("/{}", proj_name).as_str();
+
+            match std::fs::create_dir(&dir) {
+                Ok(_) => {}
+                Err(_) => return Err(
+                    format!(
+                        "destination `{}` already exists\n\nUse `crane new` to initialize the directory",
+                        &dir
+                    )
+                )
+            }
         }
 
-        Ok(())
+        Ok(Self { path: dir })
     }
 }
